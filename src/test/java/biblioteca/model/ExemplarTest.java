@@ -122,4 +122,239 @@ class ExemplarTest {
         assertTrue(toString.contains("Clean Code"), "toString deve conter título do livro");
         assertTrue(toString.contains("Disponível"), "toString deve conter estado");
     }
+
+    // Transições válidas
+
+    @Test
+    void novoExemplarComecaDisponivel() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    @Test
+    void emprestarAlteraDeDisponivelParaEmprestado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        exemplar.emprestar();
+
+        assertEquals("Emprestado", exemplar.estadoAtual());
+    }
+
+    @Test
+    void devolverAlteraDeEmprestadoParaDisponivel() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+
+        exemplar.devolver();
+
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    @Test
+    void devolverParaReservaAlteraDeEmprestadoParaReservado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+
+        exemplar.devolverParaReserva();
+
+        assertEquals("Reservado", exemplar.estadoAtual());
+    }
+
+    @Test
+    void retirarReservaAlteraDeReservadoParaEmprestado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+        exemplar.devolverParaReserva();
+
+        exemplar.retirarReserva();
+
+        assertEquals("Emprestado", exemplar.estadoAtual());
+    }
+
+    @Test
+    void cancelarReservaAlteraDeReservadoParaDisponivel() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+        exemplar.devolverParaReserva();
+
+        exemplar.cancelarReserva();
+
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    @Test
+    void sequenciaCompletaDeTransicoesValidasMantemExemplarConsistente() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        exemplar.emprestar();
+        assertEquals("Emprestado", exemplar.estadoAtual());
+
+        exemplar.devolverParaReserva();
+        assertEquals("Reservado", exemplar.estadoAtual());
+
+        exemplar.retirarReserva();
+        assertEquals("Emprestado", exemplar.estadoAtual());
+
+        exemplar.devolver();
+        assertEquals("Disponível", exemplar.estadoAtual());
+
+        exemplar.emprestar();
+        assertEquals("Emprestado", exemplar.estadoAtual());
+
+        exemplar.devolverParaReserva();
+        assertEquals("Reservado", exemplar.estadoAtual());
+
+        exemplar.cancelarReserva();
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    // Transições inválidas — estado Disponível
+    // As exceções ExemplarIndisponivelException e EstadoInvalidoException pertencem a P0
+    // e ainda não existem no projeto; a implementação atual usa UnsupportedOperationException
+    // como placeholder (ver TODOs em EstadoExemplar). Estes testes devem ser atualizados
+    // para as exceções corretas assim que P0 as implementar.
+
+    @Test
+    void disponivel_devolver_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        assertThrows(UnsupportedOperationException.class, exemplar::devolver);
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    @Test
+    void disponivel_devolverParaReserva_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        assertThrows(UnsupportedOperationException.class, exemplar::devolverParaReserva);
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    @Test
+    void disponivel_retirarReserva_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        assertThrows(UnsupportedOperationException.class, exemplar::retirarReserva);
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    @Test
+    void disponivel_cancelarReserva_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        assertThrows(UnsupportedOperationException.class, exemplar::cancelarReserva);
+        assertEquals("Disponível", exemplar.estadoAtual());
+    }
+
+    // Transições inválidas — estado Emprestado
+
+    @Test
+    void emprestado_emprestar_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+
+        assertThrows(UnsupportedOperationException.class, exemplar::emprestar);
+        assertEquals("Emprestado", exemplar.estadoAtual());
+    }
+
+    @Test
+    void emprestado_retirarReserva_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+
+        assertThrows(UnsupportedOperationException.class, exemplar::retirarReserva);
+        assertEquals("Emprestado", exemplar.estadoAtual());
+    }
+
+    @Test
+    void emprestado_cancelarReserva_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+
+        assertThrows(UnsupportedOperationException.class, exemplar::cancelarReserva);
+        assertEquals("Emprestado", exemplar.estadoAtual());
+    }
+
+    // Transições inválidas — estado Reservado
+
+    @Test
+    void reservado_emprestar_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+        exemplar.devolverParaReserva();
+
+        assertThrows(UnsupportedOperationException.class, exemplar::emprestar);
+        assertEquals("Reservado", exemplar.estadoAtual());
+    }
+
+    @Test
+    void reservado_devolver_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+        exemplar.devolverParaReserva();
+
+        assertThrows(UnsupportedOperationException.class, exemplar::devolver);
+        assertEquals("Reservado", exemplar.estadoAtual());
+    }
+
+    @Test
+    void reservado_devolverParaReserva_lancaExcecaoENaoAlteraEstado() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+        exemplar.emprestar();
+        exemplar.devolverParaReserva();
+
+        assertThrows(UnsupportedOperationException.class, exemplar::devolverParaReserva);
+        assertEquals("Reservado", exemplar.estadoAtual());
+    }
+
+    // Testes adicionais
+
+    @Test
+    void codigoNaoMudaDuranteAsTransicoes() {
+        var exemplar = new Exemplar("EX-001", criarLivroValido());
+
+        exemplar.emprestar();
+        exemplar.devolverParaReserva();
+        exemplar.retirarReserva();
+        exemplar.devolver();
+
+        assertEquals("EX-001", exemplar.codigo());
+    }
+
+    @Test
+    void livroNaoMudaDuranteAsTransicoes() {
+        var livro = criarLivroValido();
+        var exemplar = new Exemplar("EX-001", livro);
+
+        exemplar.emprestar();
+        exemplar.devolverParaReserva();
+        exemplar.retirarReserva();
+        exemplar.devolver();
+
+        assertSame(livro, exemplar.livro());
+    }
+
+    @Test
+    void doisExemplaresDiferentesMantemEstadosIndependentes() {
+        var exemplar1 = new Exemplar("EX-001", criarLivroValido());
+        var exemplar2 = new Exemplar("EX-002", criarLivroValido());
+
+        exemplar1.emprestar();
+
+        assertEquals("Emprestado", exemplar1.estadoAtual());
+        assertEquals("Disponível", exemplar2.estadoAtual());
+    }
+
+    @Test
+    void alterarEstadoDeUmExemplarNaoAfetaOutro() {
+        var exemplar1 = new Exemplar("EX-001", criarLivroValido());
+        var exemplar2 = new Exemplar("EX-002", criarLivroValido());
+
+        exemplar1.emprestar();
+        exemplar1.devolverParaReserva();
+
+        assertEquals("Reservado", exemplar1.estadoAtual());
+        assertEquals("Disponível", exemplar2.estadoAtual());
+    }
 }
