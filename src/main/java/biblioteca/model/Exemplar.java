@@ -35,6 +35,26 @@ public final class Exemplar {
         return estado.nome();
     }
 
+    public void emprestar() {
+        estado = estado.emprestar();
+    }
+
+    public void devolver() {
+        estado = estado.devolver();
+    }
+
+    public void devolverParaReserva() {
+        estado = estado.devolverParaReserva();
+    }
+
+    public void retirarReserva() {
+        estado = estado.retirarReserva();
+    }
+
+    public void cancelarReserva() {
+        estado = estado.cancelarReserva();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
