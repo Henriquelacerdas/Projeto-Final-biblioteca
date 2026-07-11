@@ -24,5 +24,16 @@ hs_err_pid*
 *.iws
 out/
 
+# VS Code
+.vscode/
+*.code-workspace
+
 # macOS
+.DS_Store
+
+# Linux
+.directory
+
+# Windows
+Thumbs.db
 .DS_Store
