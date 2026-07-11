@@ -1,4 +1,4 @@
-package br.unicamp.mc322.biblioteca.model;
+package biblioteca.model;
 
 import org.junit.jupiter.api.Test;
 

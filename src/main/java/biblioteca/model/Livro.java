@@ -1,4 +1,4 @@
-package br.unicamp.mc322.biblioteca.model;
+package biblioteca.model;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ public final class Livro {
         this.titulo = validarTexto(titulo, "titulo");
         this.autor = validarTexto(autor, "autor");
         this.editora = validarTexto(editora, "editora");
-        
+
         if (anoPublicacao <= 0) {
             throw new IllegalArgumentException("anoPublicacao deve ser maior que zero");
         }
