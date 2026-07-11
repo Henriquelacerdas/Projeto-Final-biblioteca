@@ -45,6 +45,11 @@ public final class Reserva {
         return interessados.removeFirst();
     }
 
+    public void notificarProximoDaFila() {
+        Usuario proximo = removerProximo();
+        proximo.notificarDisponibilidade(exemplar);
+    }
+
     public boolean possuiInteressados() {
         return !interessados.isEmpty();
     }

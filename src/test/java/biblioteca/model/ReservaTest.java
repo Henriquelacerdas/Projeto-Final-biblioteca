@@ -287,4 +287,132 @@ class ReservaTest {
         assertTrue(toString.contains("2"), "toString deve conter a quantidade de interessados");
         assertFalse(toString.contains("U-001"), "toString não deve expor a fila diretamente");
     }
+
+    // Notificação (notificarProximoDaFila)
+
+    @Test
+    void notificarProximoDaFilaChamaNotificarDisponibilidadeNoPrimeiroUsuarioDaFila() {
+        var exemplar = criarExemplarValido();
+        var reserva = new Reserva(exemplar);
+        var usuario1 = criarUsuario("U-001");
+        reserva.registrarInteresse(usuario1);
+        reserva.registrarInteresse(criarUsuario("U-002"));
+
+        reserva.notificarProximoDaFila();
+
+        assertTrue(usuario1.foiNotificadoSobre(exemplar));
+    }
+
+    @Test
+    void aposNotificarProximoDaFilaUsuarioNotificadoNaoEstaMaisNaFila() {
+        var reserva = new Reserva(criarExemplarValido());
+        var usuario1 = criarUsuario("U-001");
+        reserva.registrarInteresse(usuario1);
+        reserva.registrarInteresse(criarUsuario("U-002"));
+
+        reserva.notificarProximoDaFila();
+
+        assertFalse(reserva.estaInteressado(usuario1));
+    }
+
+    @Test
+    void aposNotificarProximoDaFilaQuantidadeInteressadosDiminuiEmUm() {
+        var reserva = new Reserva(criarExemplarValido());
+        reserva.registrarInteresse(criarUsuario("U-001"));
+        reserva.registrarInteresse(criarUsuario("U-002"));
+
+        reserva.notificarProximoDaFila();
+
+        assertEquals(1, reserva.quantidadeInteressados());
+    }
+
+    @Test
+    void chamadasSucessivasANotificarProximoDaFilaNotificamNaOrdemDeRegistroFIFO() {
+        var exemplar = criarExemplarValido();
+        var reserva = new Reserva(exemplar);
+        var usuario1 = criarUsuario("U-001");
+        var usuario2 = criarUsuario("U-002");
+        var usuario3 = criarUsuario("U-003");
+        reserva.registrarInteresse(usuario1);
+        reserva.registrarInteresse(usuario2);
+        reserva.registrarInteresse(usuario3);
+
+        reserva.notificarProximoDaFila();
+        assertTrue(usuario1.foiNotificadoSobre(exemplar));
+        assertFalse(usuario2.foiNotificadoSobre(exemplar));
+
+        reserva.notificarProximoDaFila();
+        assertTrue(usuario2.foiNotificadoSobre(exemplar));
+        assertFalse(usuario3.foiNotificadoSobre(exemplar));
+
+        reserva.notificarProximoDaFila();
+        assertTrue(usuario3.foiNotificadoSobre(exemplar));
+    }
+
+    @Test
+    void deveRejeitar_NotificarProximoDaFilaComFilaVazia() {
+        var reserva = new Reserva(criarExemplarValido());
+
+        assertThrows(IllegalStateException.class, reserva::notificarProximoDaFila);
+    }
+
+    @Test
+    void chamadaInvalidaDeNotificarProximoDaFilaNaoAlteraEstadoDaFila() {
+        var reserva = new Reserva(criarExemplarValido());
+
+        assertThrows(IllegalStateException.class, reserva::notificarProximoDaFila);
+
+        assertEquals(0, reserva.quantidadeInteressados());
+        assertFalse(reserva.possuiInteressados());
+    }
+
+    @Test
+    void notificarProximoDaFilaNaoNotificaDemaisUsuariosQueContinuamNaFila() {
+        var exemplar = criarExemplarValido();
+        var reserva = new Reserva(exemplar);
+        reserva.registrarInteresse(criarUsuario("U-001"));
+        var usuario2 = criarUsuario("U-002");
+        reserva.registrarInteresse(usuario2);
+
+        reserva.notificarProximoDaFila();
+
+        assertFalse(usuario2.foiNotificadoSobre(exemplar));
+    }
+
+    @Test
+    void aposNotificarProximoDaFilaUsuariosRestantesContinuamEstaInteressado() {
+        var reserva = new Reserva(criarExemplarValido());
+        reserva.registrarInteresse(criarUsuario("U-001"));
+        var usuario2 = criarUsuario("U-002");
+        reserva.registrarInteresse(usuario2);
+
+        reserva.notificarProximoDaFila();
+
+        assertTrue(reserva.estaInteressado(usuario2));
+    }
+
+    @Test
+    void exemplarRecebidoPorNotificarDisponibilidadeCorrespondeAoExemplarDaReserva() {
+        var exemplar = criarExemplarValido();
+        var reserva = new Reserva(exemplar);
+        var usuario = criarUsuario("U-001");
+        reserva.registrarInteresse(usuario);
+
+        reserva.notificarProximoDaFila();
+
+        assertTrue(usuario.foiNotificadoSobre(exemplar));
+        assertEquals(1, usuario.quantidadeNotificacoes());
+    }
+
+    @Test
+    void notificarProximoDaFilaNaoAlteraEstadoDoExemplar() {
+        var exemplar = criarExemplarValido();
+        var reserva = new Reserva(exemplar);
+        reserva.registrarInteresse(criarUsuario("U-001"));
+        var estadoAntes = exemplar.estadoAtual();
+
+        reserva.notificarProximoDaFila();
+
+        assertEquals(estadoAntes, exemplar.estadoAtual());
+    }
 }
