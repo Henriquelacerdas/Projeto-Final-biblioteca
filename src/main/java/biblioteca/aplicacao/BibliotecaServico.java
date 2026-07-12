@@ -1,5 +1,6 @@
 package biblioteca.aplicacao;
 
+import biblioteca.excecao.EstadoInvalidoException;
 import biblioteca.excecao.ExemplarIndisponivelException;
 import biblioteca.model.Emprestimo;
 import biblioteca.model.Exemplar;
@@ -82,7 +83,14 @@ public final class BibliotecaServico {
                     "Usuario " + usuario.codigo() + " atingiu o limite de emprestimos permitido");
         }
 
-        exemplar.emprestar();
+        try {
+            exemplar.emprestar();
+        } catch (EstadoInvalidoException e) {
+            // Traducao de excecao: a violacao de contrato do State (baixo nivel)
+            // vira uma situacao de negocio recuperavel na camada de aplicacao,
+            // que o chamador pode tratar (ex.: oferecer entrar na fila de reserva).
+            throw new ExemplarIndisponivelException(codigoExemplar, e);
+        }
 
         Emprestimo emprestimo = new Emprestimo(gerarCodigoEmprestimo(), usuario, exemplar, dataEmprestimo);
         return emprestimos.salvar(emprestimo);
