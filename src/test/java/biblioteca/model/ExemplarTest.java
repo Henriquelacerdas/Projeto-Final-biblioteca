@@ -1,5 +1,5 @@
 package biblioteca.model;
-
+import biblioteca.excecao.EstadoInvalidoException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -219,7 +219,7 @@ class ExemplarTest {
     void disponivel_devolver_lancaExcecaoENaoAlteraEstado() {
         var exemplar = new Exemplar("EX-001", criarLivroValido());
 
-        assertThrows(UnsupportedOperationException.class, exemplar::devolver);
+        assertThrows(EstadoInvalidoException.class, exemplar::devolver);
         assertEquals("Disponível", exemplar.estadoAtual());
     }
 
@@ -227,7 +227,7 @@ class ExemplarTest {
     void disponivel_devolverParaReserva_lancaExcecaoENaoAlteraEstado() {
         var exemplar = new Exemplar("EX-001", criarLivroValido());
 
-        assertThrows(UnsupportedOperationException.class, exemplar::devolverParaReserva);
+        assertThrows(EstadoInvalidoException.class, exemplar::devolverParaReserva);
         assertEquals("Disponível", exemplar.estadoAtual());
     }
 
@@ -235,7 +235,7 @@ class ExemplarTest {
     void disponivel_retirarReserva_lancaExcecaoENaoAlteraEstado() {
         var exemplar = new Exemplar("EX-001", criarLivroValido());
 
-        assertThrows(UnsupportedOperationException.class, exemplar::retirarReserva);
+        assertThrows(EstadoInvalidoException.class, exemplar::retirarReserva);
         assertEquals("Disponível", exemplar.estadoAtual());
     }
 
@@ -243,7 +243,7 @@ class ExemplarTest {
     void disponivel_cancelarReserva_lancaExcecaoENaoAlteraEstado() {
         var exemplar = new Exemplar("EX-001", criarLivroValido());
 
-        assertThrows(UnsupportedOperationException.class, exemplar::cancelarReserva);
+        assertThrows(EstadoInvalidoException.class, exemplar::cancelarReserva);
         assertEquals("Disponível", exemplar.estadoAtual());
     }
 
@@ -254,7 +254,7 @@ class ExemplarTest {
         var exemplar = new Exemplar("EX-001", criarLivroValido());
         exemplar.emprestar();
 
-        assertThrows(UnsupportedOperationException.class, exemplar::emprestar);
+        assertThrows(EstadoInvalidoException.class, exemplar::emprestar);
         assertEquals("Emprestado", exemplar.estadoAtual());
     }
 
@@ -263,7 +263,7 @@ class ExemplarTest {
         var exemplar = new Exemplar("EX-001", criarLivroValido());
         exemplar.emprestar();
 
-        assertThrows(UnsupportedOperationException.class, exemplar::retirarReserva);
+        assertThrows(EstadoInvalidoException.class, exemplar::retirarReserva);
         assertEquals("Emprestado", exemplar.estadoAtual());
     }
 
@@ -272,7 +272,7 @@ class ExemplarTest {
         var exemplar = new Exemplar("EX-001", criarLivroValido());
         exemplar.emprestar();
 
-        assertThrows(UnsupportedOperationException.class, exemplar::cancelarReserva);
+        assertThrows(EstadoInvalidoException.class, exemplar::cancelarReserva);
         assertEquals("Emprestado", exemplar.estadoAtual());
     }
 
@@ -284,7 +284,7 @@ class ExemplarTest {
         exemplar.emprestar();
         exemplar.devolverParaReserva();
 
-        assertThrows(UnsupportedOperationException.class, exemplar::emprestar);
+        assertThrows(EstadoInvalidoException.class, exemplar::emprestar);
         assertEquals("Reservado", exemplar.estadoAtual());
     }
 
@@ -294,7 +294,7 @@ class ExemplarTest {
         exemplar.emprestar();
         exemplar.devolverParaReserva();
 
-        assertThrows(UnsupportedOperationException.class, exemplar::devolver);
+        assertThrows(EstadoInvalidoException.class, exemplar::devolver);
         assertEquals("Reservado", exemplar.estadoAtual());
     }
 
@@ -304,7 +304,7 @@ class ExemplarTest {
         exemplar.emprestar();
         exemplar.devolverParaReserva();
 
-        assertThrows(UnsupportedOperationException.class, exemplar::devolverParaReserva);
+        assertThrows(EstadoInvalidoException.class, exemplar::devolverParaReserva);
         assertEquals("Reservado", exemplar.estadoAtual());
     }
 
